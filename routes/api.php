@@ -11,5 +11,6 @@ Route::get('/health', [AuthController::class,'health']);
 
 Route::middleware('auth:sanctum')->group(function () {
 Route::apiResource('products',ProductController::class);
+Route::apiResource('cart', CartController::class);
 Route::post('/logout', [AuthController::class,'logout']);
 });
