@@ -1,96 +1,72 @@
-# Laravel Project Initialization for ECOMMERCE-API
+# Ecommerce API
 
-This guide provides the basic steps required to initialize and run a the ECOMMERCE-API.
-
----
-
-# Prerequisites
-
-Ensure the following are installed:
-
-- PHP 8.2 or later
-- Composer
-- MySQL
-- Git 
-- Node.js & npm (for frontend assets)
-
-Check installations:
-
-```bash
-php -v
-composer -V
-mysql --version
-node -v
-npm -v
-```
+A RESTful E-commerce API built with Laravel and Laravel Sanctum. This project provides authentication, product management, shopping cart functionality, and order management.
 
 ---
 
-# 1. Create a New Laravel Project
+## Features
 
-Using Composer:
-
-```bash
-composer create-project laravel/laravel ECOMMERCE-API
-```
-
-Or using the Laravel Installer:
-
-```bash
-laravel new ECOMMERCE-API
-```
+* User Registration
+* User Login & Logout
+* Laravel Sanctum Authentication
+* Product CRUD
+* Product Pagination
+* Shopping Cart
+* Order Management
+* MySQL Database
+* RESTful API
 
 ---
 
-# 2. Navigate to the Project
+## Technologies Used
 
-```bash
-cd ECOMMERCE-API
-```
-
----
-
-# 3. Start the Development Server
-
-```bash
-php artisan serve
-```
-
-Default URL:
-
-```
-http://127.0.0.1:8000
-```
+* Laravel 12
+* PHP 8.2+
+* MySQL
+* Laravel Sanctum
+* Composer
 
 ---
 
-# 4. Configure Environment
+## Installation
 
-Copy the example environment file.
+Clone the repository:
+
+```bash
+git clone <repository-url>
+```
+
+Navigate into the project:
+
+```bash
+cd ecommerce_api
+```
+
+Install dependencies:
+
+```bash
+composer install
+```
+
+Copy the environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-On Windows:
+Windows:
 
 ```cmd
 copy .env.example .env
 ```
 
----
-
-# 5. Generate Application Key
+Generate the application key:
 
 ```bash
 php artisan key:generate
 ```
 
----
-
-# 6. Configure Database
-
-Edit the `.env` file.
+Update your `.env` database configuration:
 
 ```env
 DB_CONNECTION=mysql
@@ -98,12 +74,10 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=ecommerce_api
 DB_USERNAME=root
-DB_PASSWORD=root
+DB_PASSWORD=
 ```
 
-Create the database manually in MySQL.
-
-Example:
+Create the database:
 
 ```sql
 CREATE DATABASE ecommerce_api;
@@ -111,74 +85,180 @@ CREATE DATABASE ecommerce_api;
 
 ---
 
-# 7. Run Migrations
+# Run the Project (One Command)
+
+Once the project has been installed and configured, start the development server using:
+
+```bash
+composer run dev
+```
+
+This command automatically:
+
+* Starts the Laravel development server
+* Starts the Vite development server
+* Starts the Laravel queue listener (if configured)
+* Displays application logs
+
+The API will be available at:
+
+```
+http://127.0.0.1:8000
+```
+
+---
+
+## Database Migration
+
+Run all migrations:
 
 ```bash
 php artisan migrate
 ```
 
----
-
-# 8. Seed Database
-
-Run default seeders:
+If starting fresh:
 
 ```bash
-php artisan db:seed
-```
-
-Or migrate and seed together:
-
-```bash
-php artisan migrate:fresh --seed
+php artisan migrate:fresh
 ```
 
 ---
 
-# 9. Install Frontend Dependencies (Optional)
+## API Authentication
 
-```bash
-npm install
+This project uses **Laravel Sanctum**.
+
+Register:
+
+```
+POST /api/register
 ```
 
-Run Vite development server:
+Login:
 
-```bash
-npm run dev
+```
+POST /api/login
 ```
 
-Build production assets:
+Include the returned token in every authenticated request:
 
-```bash
-npm run build
+```
+Authorization: Bearer YOUR_TOKEN
+```
+
+Logout:
+
+```
+POST /api/logout
 ```
 
 ---
 
-# 10. Useful Artisan Commands
+## API Endpoints
 
-Create a controller:
+### Authentication
 
-```bash
-php artisan make:controller ProductController
+| Method | Endpoint      |
+| ------ | ------------- |
+| POST   | /api/register |
+| POST   | /api/login    |
+| POST   | /api/logout   |
+
+---
+
+### Products
+
+| Method | Endpoint           | Description                  |
+| ------ | ------------------ | ---------------------------- |
+| GET    | /api/products      | Get all products (paginated) |
+| POST   | /api/products      | Create product               |
+| GET    | /api/products/{id} | Get product                  |
+| PUT    | /api/products/{id} | Update product               |
+| DELETE | /api/products/{id} | Delete product               |
+
+Pagination example:
+
+```
+GET /api/products?page=1&per_page=10
 ```
 
-Create a model:
+---
 
-```bash
-php artisan make:model Product
+### Shopping Cart
+
+| Method | Endpoint       |
+| ------ | -------------- |
+| GET    | /api/cart      |
+| POST   | /api/cart      |
+| GET    | /api/cart/{id} |
+| PUT    | /api/cart/{id} |
+| DELETE | /api/cart/{id} |
+
+---
+
+### Orders
+
+| Method | Endpoint         |
+| ------ | ---------------- |
+| GET    | /api/orders      |
+| POST   | /api/orders      |
+| GET    | /api/orders/{id} |
+| PUT    | /api/orders/{id} |
+| DELETE | /api/orders/{id} |
+
+---
+
+## Testing with Postman
+
+1. Register a user.
+2. Login to obtain a Bearer Token.
+3. Create products.
+4. View paginated products.
+5. Add products to the cart.
+6. Checkout by creating an order.
+7. View orders.
+8. Logout.
+
+---
+
+## Project Structure
+
+```
+app/
+├── Http/
+│   └── Controllers/
+│       ├── AuthController.php
+│       ├── ProductController.php
+│       ├── CartController.php
+│       └── OrderController.php
+├── Models/
+│   ├── User.php
+│   ├── Product.php
+│   ├── CartItem.php
+│   ├── Order.php
+│   └── OrderItem.php
+
+database/
+├── migrations/
+
+routes/
+└── api.php
 ```
 
-Create a model with migration, controller, factory, and seeder:
+---
+
+## Useful Commands
+
+Generate a controller:
 
 ```bash
-php artisan make:model Product -mcrfs
+php artisan make:controller ProductController --api
 ```
 
-Create a migration:
+Generate a model with migration:
 
 ```bash
-php artisan make:migration create_products_table
+php artisan make:model Product -m
 ```
 
 Run migrations:
@@ -187,67 +267,26 @@ Run migrations:
 php artisan migrate
 ```
 
-Rollback last migration:
-
-```bash
-php artisan migrate:rollback
-```
-
 Refresh database:
 
 ```bash
 php artisan migrate:fresh
 ```
 
-Refresh and seed:
+View API routes:
 
 ```bash
-php artisan migrate:fresh --seed
+php artisan route:list --path=api
 ```
 
-List all routes:
-
-```bash
-php artisan route:list
-```
-
-Clear cache:
+Clear caches:
 
 ```bash
 php artisan optimize:clear
 ```
 
-Clear configuration cache:
-
-```bash
-php artisan config:clear
-```
-
-Cache configuration:
-
-```bash
-php artisan config:cache
-```
-
 ---
-## API Endpoints
 
-### Authentication
+## License
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/register | Register a new user |
-| POST | /api/login | Authenticate user |
-| POST | /api/logout | Logout authenticated user |
-| GET | /api/health | check API health |
-
-
-### Products
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | /api/products | Get all products |
-| GET | /api/products/{id} | Get a single product |
-| POST | /api/products | Create a product |
-| PUT | /api/products/{id} | Update a product |
-| DELETE | /api/products/{id} | Delete a product |
+This project is open-source and available under the MIT License.

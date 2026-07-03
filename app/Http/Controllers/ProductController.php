@@ -12,8 +12,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-        $products = Product::all();
+        $products = Product::latest()->paginate(10);
         return response()->json($products);
     }
 
@@ -26,7 +25,9 @@ class ProductController extends Controller
         $validation = $request->validate([
             'name' =>'required|string|max:255',
             'price' => 'required|numeric',
-            'quantity' => 'required|integer'
+            'description' => 'required|string',
+            'category' => 'required|string',
+            'stock' => 'required|integer'
         ]);
         $product = Product::create($validation);
         return response()->json([
