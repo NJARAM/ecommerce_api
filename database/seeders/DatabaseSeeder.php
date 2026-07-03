@@ -20,6 +20,13 @@ class DatabaseSeeder extends Seeder
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
+            'password_hash' => 'password',
+            'mobile' => '0724229314',
+        ]);
+
+         $this->call([
+           // CategorySeeder::class,
+            ProductSeeder::class,
         ]);
     }
 }
