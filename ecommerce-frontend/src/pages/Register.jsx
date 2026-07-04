@@ -1,54 +1,17 @@
-// import { useState } from "react";
-// import api from "../api/axios";
-
-// function Login() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-
-//   const login = async (e) => {
-//     e.preventDefault();
-
-//     const response = await api.post("/login", {
-//       email,
-//       password,
-//     });
-
-//     localStorage.setItem("token", response.data.token);
-
-//     alert("Login successful");
-//   };
-
-//   return (
-//     <form onSubmit={login}>
-//       <input
-//         type="email"
-//         placeholder="Email"
-//         onChange={(e) => setEmail(e.target.value)}
-//       />
-
-//       <input
-//         type="password"
-//         placeholder="Password"
-//         onChange={(e) => setPassword(e.target.value)}
-//       />
-
-//       <button type="submit">Login</button>
-//     </form>
-//   );
-// }
-
-// export default Login;
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-function Login() {
+function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
 
   const [form, setForm] = useState({
+    name: "",
     email: "",
+    mobile: "",
     password: "",
+    password_confirmation: "",
   });
 
   const [error, setError] = useState("");
@@ -67,10 +30,10 @@ function Login() {
     setLoading(true);
 
     try {
-      await login(form.email, form.password);
+      await register(form);
       navigate("/products");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
@@ -78,11 +41,25 @@ function Login() {
 
   return (
     <div>
-      <h2>Login</h2>
+      <h2>Register</h2>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       <form onSubmit={handleSubmit}>
+        <div>
+          <label>Name</label>
+          <br />
+          <input
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <br />
+
         <div>
           <label>Email</label>
           <br />
@@ -90,6 +67,20 @@ function Login() {
             type="email"
             name="email"
             value={form.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <br />
+
+        <div>
+          <label>Mobile</label>
+          <br />
+          <input
+            type="text"
+            name="mobile"
+            value={form.mobile}
             onChange={handleChange}
             required
           />
@@ -111,16 +102,30 @@ function Login() {
 
         <br />
 
+        <div>
+          <label>Confirm Password</label>
+          <br />
+          <input
+            type="password"
+            name="password_confirmation"
+            value={form.password_confirmation}
+            onChange={handleChange}
+            required
+          />
+        </div>
+
+        <br />
+
         <button type="submit" disabled={loading}>
-          {loading ? "Logging in..." : "Login"}
+          {loading ? "Registering..." : "Register"}
         </button>
       </form>
 
       <p>
-        No account? <Link to="/register">Register here</Link>
+        Already have an account? <Link to="/login">Login here</Link>
       </p>
     </div>
   );
 }
 
-export default Login;
+export default Register;
