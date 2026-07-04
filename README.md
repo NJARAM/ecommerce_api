@@ -1,34 +1,42 @@
 # Ecommerce API
 
-A RESTful E-commerce API built with Laravel and Laravel Sanctum. This project provides authentication, product management, shopping cart functionality, and order management.
+A RESTful E-commerce API built with Laravel 12 and Laravel Sanctum. The project provides secure authentication, product management, shopping cart functionality, and order management.
 
 ---
 
-## Features
+# Features
 
 * User Registration
 * User Login & Logout
 * Laravel Sanctum Authentication
+* Token Expiration (24 Hours)
 * Product CRUD
 * Product Pagination
 * Shopping Cart
 * Order Management
-* MySQL Database
 * RESTful API
+* MySQL Database
 
 ---
 
-## Technologies Used
+# Tech Stack
+
+## Backend
 
 * Laravel 12
 * PHP 8.2+
 * MySQL
 * Laravel Sanctum
-* Composer
+
+## Frontend
+
+* React (Vite)
+* Axios
+* React Router DOM
 
 ---
 
-## Installation
+# Installation
 
 Clone the repository:
 
@@ -66,7 +74,7 @@ Generate the application key:
 php artisan key:generate
 ```
 
-Update your `.env` database configuration:
+Configure your database in `.env`:
 
 ```env
 DB_CONNECTION=mysql
@@ -77,28 +85,23 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Create the database:
+Run migrations:
 
-```sql
-CREATE DATABASE ecommerce_api;
+```bash
+php artisan migrate
 ```
 
 ---
 
-# Run the Project (One Command)
+# Running the Project
 
-Once the project has been installed and configured, start the development server using:
+## Backend
+
+Start Laravel using a single command:
 
 ```bash
 composer run dev
 ```
-
-This command automatically:
-
-* Starts the Laravel development server
-* Starts the Vite development server
-* Starts the Laravel queue listener (if configured)
-* Displays application logs
 
 The API will be available at:
 
@@ -108,45 +111,67 @@ http://127.0.0.1:8000
 
 ---
 
-## Database Migration
+## Frontend
 
-Run all migrations:
+Navigate to the frontend project:
 
 ```bash
-php artisan migrate
+cd ecommerce-frontend
 ```
 
-If starting fresh:
+Install dependencies:
 
 ```bash
-php artisan migrate:fresh
+npm install
+```
+
+Run React:
+
+```bash
+npm run dev
+```
+
+Frontend URL:
+
+```
+http://localhost:5173
 ```
 
 ---
 
-## API Authentication
+# Authentication
 
-This project uses **Laravel Sanctum**.
+The project uses **Laravel Sanctum**.
 
-Register:
+## Register
 
 ```
 POST /api/register
 ```
 
-Login:
+## Login
 
 ```
 POST /api/login
 ```
 
-Include the returned token in every authenticated request:
+Returns
+
+```json
+{
+    "token": "...",
+    "expires_in": 1440,
+    "user": {}
+}
+```
+
+Use the token in every request.
 
 ```
 Authorization: Bearer YOUR_TOKEN
 ```
 
-Logout:
+## Logout
 
 ```
 POST /api/logout
@@ -154,27 +179,28 @@ POST /api/logout
 
 ---
 
-## API Endpoints
+# API Endpoints
 
-### Authentication
+## Authentication
 
 | Method | Endpoint      |
 | ------ | ------------- |
 | POST   | /api/register |
 | POST   | /api/login    |
 | POST   | /api/logout   |
+| GET    | /api/health   |
 
 ---
 
-### Products
+## Products
 
-| Method | Endpoint           | Description                  |
-| ------ | ------------------ | ---------------------------- |
-| GET    | /api/products      | Get all products (paginated) |
-| POST   | /api/products      | Create product               |
-| GET    | /api/products/{id} | Get product                  |
-| PUT    | /api/products/{id} | Update product               |
-| DELETE | /api/products/{id} | Delete product               |
+| Method | Endpoint           | Description               |
+| ------ | ------------------ | ------------------------- |
+| GET    | /api/products      | List products (paginated) |
+| POST   | /api/products      | Create product            |
+| GET    | /api/products/{id} | Get product               |
+| PUT    | /api/products/{id} | Update product            |
+| DELETE | /api/products/{id} | Delete product            |
 
 Pagination example:
 
@@ -184,7 +210,7 @@ GET /api/products?page=1&per_page=10
 
 ---
 
-### Shopping Cart
+## Cart
 
 | Method | Endpoint       |
 | ------ | -------------- |
@@ -196,7 +222,7 @@ GET /api/products?page=1&per_page=10
 
 ---
 
-### Orders
+## Orders
 
 | Method | Endpoint         |
 | ------ | ---------------- |
@@ -208,20 +234,56 @@ GET /api/products?page=1&per_page=10
 
 ---
 
-## Testing with Postman
+# Database Structure
 
-1. Register a user.
-2. Login to obtain a Bearer Token.
-3. Create products.
-4. View paginated products.
-5. Add products to the cart.
-6. Checkout by creating an order.
-7. View orders.
-8. Logout.
+```
+users
+products
+cart_items
+orders
+order_items
+```
+
+Relationships:
+
+```
+User
+ ├── hasMany Orders
+ └── hasMany CartItems
+
+Order
+ ├── belongsTo User
+ └── hasMany OrderItems
+
+OrderItem
+ ├── belongsTo Order
+ └── belongsTo Product
+
+Product
+ ├── hasMany CartItems
+ └── hasMany OrderItems
+```
 
 ---
 
-## Project Structure
+# React Integration
+
+The React frontend communicates with Laravel using Axios.
+
+Authentication is handled by Laravel Sanctum using Bearer Tokens stored in Local Storage.
+
+Current frontend modules:
+
+* Login
+* Register
+* Products
+* Product Pagination
+* Shopping Cart (In Progress)
+* Orders (In Progress)
+
+---
+
+# Project Structure
 
 ```
 app/
@@ -231,15 +293,17 @@ app/
 │       ├── ProductController.php
 │       ├── CartController.php
 │       └── OrderController.php
-├── Models/
-│   ├── User.php
-│   ├── Product.php
-│   ├── CartItem.php
-│   ├── Order.php
-│   └── OrderItem.php
+
+app/
+└── Models/
+    ├── User.php
+    ├── Product.php
+    ├── CartItem.php
+    ├── Order.php
+    └── OrderItem.php
 
 database/
-├── migrations/
+└── migrations/
 
 routes/
 └── api.php
@@ -247,15 +311,15 @@ routes/
 
 ---
 
-## Useful Commands
+# Useful Commands
 
-Generate a controller:
+Create a controller:
 
 ```bash
 php artisan make:controller ProductController --api
 ```
 
-Generate a model with migration:
+Create a model:
 
 ```bash
 php artisan make:model Product -m
@@ -267,19 +331,19 @@ Run migrations:
 php artisan migrate
 ```
 
-Refresh database:
+Reset database:
 
 ```bash
 php artisan migrate:fresh
 ```
 
-View API routes:
+List routes:
 
 ```bash
 php artisan route:list --path=api
 ```
 
-Clear caches:
+Clear cache:
 
 ```bash
 php artisan optimize:clear
@@ -287,6 +351,53 @@ php artisan optimize:clear
 
 ---
 
-## License
+# API Testing
 
-This project is open-source and available under the MIT License.
+The API can be tested using:
+
+* Postman
+* Insomnia
+* Thunder Client (VS Code)
+
+Recommended test flow:
+
+1. Register
+2. Login
+3. Create Product
+4. View Products
+5. Add Product to Cart
+6. View Cart
+7. Checkout
+8. View Orders
+9. Logout
+
+---
+
+# Current Status
+
+## Backend
+
+* ✅ Authentication
+* ✅ Sanctum
+* ✅ Product CRUD
+* ✅ Pagination
+* ✅ Cart API
+* ✅ Orders API
+
+## Frontend
+
+* ✅ React + Vite
+* ✅ Axios
+* ✅ Authentication
+* ✅ Login
+* ✅ Register
+* ✅ Product Listing
+* 🚧 Shopping Cart
+* 🚧 Checkout
+* 🚧 Orders
+
+---
+
+# License
+
+MIT License
